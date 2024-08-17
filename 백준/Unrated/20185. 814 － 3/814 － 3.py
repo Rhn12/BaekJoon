@@ -1,10 +1,8 @@
 import math
 
-# 유클리드 거리 계산 함수
 def distance(p1, p2):
     return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
-# Greedy 방식으로 순회 경로 찾기
 def greedy_tsp(points):
     n = len(points)
     visited = [False] * n
@@ -21,16 +19,20 @@ def greedy_tsp(points):
     
     return tour
 
-# 입력 처리
+def initial_clustering(cities, K):
+    clusters = [[] for _ in range(K)]
+    sorted_cities = sorted(range(len(cities)), key=lambda i: (cities[i][0], cities[i][1]))
+    for i, city_idx in enumerate(sorted_cities):
+        clusters[i % K].append(city_idx)
+    return clusters
+
 N, K = map(int, input().split())
 cities = [tuple(map(int, input().split())) for _ in range(N)]
 
-# 초기 K개 클러스터로 분할 (여기서는 간단히 K등분)
-clusters = [[] for _ in range(K)]
-for i in range(N):
-    clusters[i % K].append(i)
+# 초기 클러스터링 (X좌표, Y좌표 순으로 정렬하여 K개 클러스터로 분할)
+clusters = initial_clustering(cities, K)
 
-# 각 클러스터에서 TSP 문제 해결
+# 각 클러스터에서 TSP 경로 계산
 tours = []
 for cluster in clusters:
     points = [cities[i] for i in cluster]
